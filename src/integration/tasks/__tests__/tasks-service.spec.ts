@@ -1,5 +1,5 @@
 import {describe, it, vi, expect} from "vitest";
-//import {faker} from "@faker-js/faker";
+import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../core/dtos/task.dto";
 import Tasks from "../index";
 
@@ -42,8 +42,8 @@ describe('Tasks service integration tests', () => {
             }
 
         }, timeout);
-        
-        it('getTaskByID should return a TaskDTO', async () => {
+
+        it('getTaskByID should return a TaskDTO if task with provided id exists', async () => {
 
             const tasks = await Tasks.getAllTasks();
             const fakeID = tasks[0].id;
@@ -54,6 +54,8 @@ describe('Tasks service integration tests', () => {
             expect(spy).toHaveBeenCalled();
             expect(spy).toHaveBeenCalledOnce();
             expect(spy).toHaveBeenCalledWith(fakeID);
+
+            expect(result).toBeTruthy();
 
             expect(result).toEqual(expect.objectContaining(<TaskDTO>{
                 id: expect.any(String),
@@ -68,6 +70,21 @@ describe('Tasks service integration tests', () => {
             expect(result?.id).toMatch(uuidRegex);
             expect(result?.status).toMatch(statusOptionsRegex);
             expect(result?.priority).toMatch(priorityOptionsRegex);
+
+        }, timeout);
+
+        it('getTaskByID should return null if task with provided id does not exists', async () => {
+
+            const fakeID = faker.datatype.uuid();
+
+            const spy = vi.spyOn(Tasks, 'getTaskByID');
+            const result = await Tasks.getTaskByID(fakeID);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeID);
+
+            expect(result).toBeNull();
 
         }, timeout);
 
