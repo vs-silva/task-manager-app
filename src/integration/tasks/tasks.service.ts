@@ -9,7 +9,19 @@ export function TasksService(reader: TasksServiceReaderDrivenPort):TasksServiceD
         return await TasksMapper.mapToTasksCollection(response);
     }
 
+    async function getTaskByID(id: string): Promise<TaskDTO | null> {
+        const response = await reader.getByID(id);
+
+        if(!response) {
+           return null;
+        }
+
+        const result = await TasksMapper.mapToTasksCollection([response]);
+        return result[0];
+    }
+
     return {
-        getAllTasks
+        getAllTasks,
+        getTaskByID
     };
 }
