@@ -1,5 +1,5 @@
 import {describe, it, vi, expect} from "vitest";
-//import {faker} from "@faker-js/faker";
+import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../core/dtos/task.dto";
 import Tasks from "../index";
 
@@ -43,7 +43,7 @@ describe('Tasks service integration tests', () => {
 
         }, timeout);
 
-        /*
+
 
         it('getTaskByID should return a TaskDTO', async () => {
 
@@ -71,6 +71,8 @@ describe('Tasks service integration tests', () => {
             expect(result.priority).toMatch(priorityOptionsRegex);
 
         }, timeout);
+
+        /*
 
         it('createOrUpdateTask should add Task', async () => {
 
