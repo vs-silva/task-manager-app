@@ -10,7 +10,18 @@ export function MockDataReaderAdapter(): TasksServiceReaderDrivenPort {
         return data;
     }
 
+    async function getByID(id: string): Promise<TaskResponseDTO | null> {
+        const result = data.find(item => item.id === id);
+
+        if(!result){
+            return null;
+        }
+
+        return result;
+    }
+
     return {
-        getAll
+        getAll,
+        getByID
     };
 }

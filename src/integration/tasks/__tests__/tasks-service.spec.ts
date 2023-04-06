@@ -1,5 +1,5 @@
 import {describe, it, vi, expect} from "vitest";
-import {faker} from "@faker-js/faker";
+//import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../core/dtos/task.dto";
 import Tasks from "../index";
 
@@ -42,12 +42,11 @@ describe('Tasks service integration tests', () => {
             }
 
         }, timeout);
-
-
-
+        
         it('getTaskByID should return a TaskDTO', async () => {
 
-            const fakeID = faker.datatype.uuid();
+            const tasks = await Tasks.getAllTasks();
+            const fakeID = tasks[0].id;
 
             const spy = vi.spyOn(Tasks, 'getTaskByID');
             const result = await Tasks.getTaskByID(fakeID);
@@ -66,9 +65,9 @@ describe('Tasks service integration tests', () => {
                 canDelete: expect.any(Boolean)
             }));
 
-            expect(result.id).toMatch(uuidRegex);
-            expect(result.status).toMatch(statusOptionsRegex);
-            expect(result.priority).toMatch(priorityOptionsRegex);
+            expect(result?.id).toMatch(uuidRegex);
+            expect(result?.status).toMatch(statusOptionsRegex);
+            expect(result?.priority).toMatch(priorityOptionsRegex);
 
         }, timeout);
 
