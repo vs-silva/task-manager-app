@@ -1,9 +1,9 @@
 export interface TaskDTO {
-    id: string;
+    id?: string;
     title: string;
-    description: string;
-    status: string;
+    description?: string;
+    status?: string;
     priority: string;
     complete: boolean;
-    canDelete: boolean;
+    canDelete?: boolean;
 }
