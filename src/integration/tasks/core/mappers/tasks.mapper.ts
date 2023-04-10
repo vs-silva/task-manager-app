@@ -1,7 +1,9 @@
-import type {TasksResponseMapper} from "./tasks-response.mapper";
+import type {TasksMapperInterface} from "./tasks-mapper.interface";
 import type {TaskDTO} from "../dtos/task.dto";
 import type {TaskResponseDTO} from "../dtos/task-response.dto";
+import type {TaskRequestDTO} from "../dtos/task-request.dto";
 import {TasksStatusConstants} from "../constants/tasks-status.constants";
+
 
 async function mapToTasksCollection(data: TaskResponseDTO[]): Promise<TaskDTO[]> {
     return data.map( res => (<TaskDTO>{
@@ -15,6 +17,17 @@ async function mapToTasksCollection(data: TaskResponseDTO[]): Promise<TaskDTO[]>
     }));
 }
 
-export const TasksMapper: TasksResponseMapper = {
-    mapToTasksCollection
+async function mapToTaskRequest(dto: TaskDTO): Promise<TaskRequestDTO> {
+    return <TaskRequestDTO> {
+        id: dto.id,
+        title: dto.title,
+        description: dto.description,
+        complete: dto.complete,
+        priority: dto.priority
+    };
+}
+
+export const TasksMapper: TasksMapperInterface = {
+    mapToTasksCollection,
+    mapToTaskRequest
 } as const;

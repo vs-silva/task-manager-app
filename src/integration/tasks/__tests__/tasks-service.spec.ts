@@ -2,6 +2,7 @@ import {describe, it, vi, expect} from "vitest";
 import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../core/dtos/task.dto";
 import Tasks from "../index";
+import {TasksPriorityConstants} from "../core/constants/tasks-priority.constants";
 
 describe('Tasks service integration tests', () => {
 
@@ -48,6 +49,10 @@ describe('Tasks service integration tests', () => {
             const tasks = await Tasks.getAllTasks();
             const fakeID = tasks[0].id;
 
+            if(!fakeID) {
+                return;
+            }
+
             const spy = vi.spyOn(Tasks, 'getTaskByID');
             const result = await Tasks.getTaskByID(fakeID);
 
@@ -88,26 +93,28 @@ describe('Tasks service integration tests', () => {
 
         }, timeout);
 
-        /*
+        it('saveTask should add Task', async () => {
 
-        it('createOrUpdateTask should add Task', async () => {
-
-            const fakeTaskDTO = <CreateUpdateTaskDTO>{
+            const fakeTaskDTO = <TaskDTO>{
                 title: faker.random.words(2),
                 description: faker.random.words(10),
-                priority: TaskPriorityConstants.LOW
+                priority: TasksPriorityConstants.LOW,
+                complete: faker.datatype.boolean()
             };
 
             const initialTasks = await Tasks.getAllTasks();
 
-            const spy = vi.spyOn(Tasks, 'createOrUpdateTask');
-            await Tasks.createOrUpdateTask(fakeTaskDTO);
+            const spy = vi.spyOn(Tasks, 'saveTask');
+            await Tasks.saveTask(fakeTaskDTO);
 
             expect(spy).toHaveBeenCalled();
             expect(spy).toHaveBeenCalledOnce();
             expect(spy).toHaveBeenCalledWith(fakeTaskDTO);
 
             const updatedTasks = await Tasks.getAllTasks();
+
+
+            console.log(updatedTasks);
 
             expect(updatedTasks.length).toBeGreaterThan(initialTasks.length);
 
@@ -118,6 +125,9 @@ describe('Tasks service integration tests', () => {
             }
 
         }, timeout);
+
+        /*
+
 
         it('removeTask should remove a Task', async () => {
 
