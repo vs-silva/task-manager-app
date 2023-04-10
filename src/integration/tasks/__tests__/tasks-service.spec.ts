@@ -113,9 +113,6 @@ describe('Tasks service integration tests', () => {
 
             const updatedTasks = await Tasks.getAllTasks();
 
-
-            console.log(updatedTasks);
-
             expect(updatedTasks.length).toBeGreaterThan(initialTasks.length);
 
             for (const task of updatedTasks) {
@@ -126,27 +123,40 @@ describe('Tasks service integration tests', () => {
 
         }, timeout);
 
-        /*
-
-
         it('removeTask should remove a Task', async () => {
 
-            const fakeID = faker.datatype.uuid();
+            const fakeTaskDTO = <TaskDTO>{
+                title: faker.random.words(2),
+                description: faker.random.words(10),
+                priority: TasksPriorityConstants.LOW,
+                complete: faker.datatype.boolean()
+            };
+
+            await Tasks.saveTask(fakeTaskDTO);
+
+            const tasks = await Tasks.getAllTasks();
+            const createdTask = tasks.find(x => x.title === fakeTaskDTO.title);
+
+            if(!createdTask || !createdTask.id) {
+                return;
+            }
+
+            const taskId = createdTask.id;
 
             const spy = vi.spyOn(Tasks, 'removeTask');
-            await Tasks.removeTask(fakeID);
+            await Tasks.removeTask(taskId);
 
             expect(spy).toHaveBeenCalled();
             expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(fakeID);
+            expect(spy).toHaveBeenCalledWith(taskId);
 
-            await Tasks.removeTask(fakeID);
-            const result = await Tasks.getTaskByID(fakeID);
+            await Tasks.removeTask(taskId);
+            const result = await Tasks.getTaskByID(taskId);
 
             expect(result).toBeNull();
 
         }, timeout);
- */
+
     });
 
 });

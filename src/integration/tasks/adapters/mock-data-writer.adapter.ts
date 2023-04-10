@@ -14,7 +14,13 @@ export function MockDataWriterAdapter(): TasksServiceWriterDrivenPort {
         data.push(dto);
     }
 
+    async function remove(id: string): Promise<void> {
+        const index = data.findIndex( x => x.id === id);
+        data.splice(index, 1);
+    }
+
     return {
-      save
+      save,
+      remove
     };
 }
