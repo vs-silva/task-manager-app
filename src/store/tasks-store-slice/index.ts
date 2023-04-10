@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import type {TaskDTO} from "../../integration/tasks/core/dtos/task.dto";
 import Tasks from "../../integration/tasks";
+import {ThunkNameConstants} from "./thunk-name.constants";
 
 
 const initialState = {
@@ -9,21 +10,21 @@ const initialState = {
 }
 
 export const getAllTasks = createAsyncThunk(
-    'get-all-tasks',
+    ThunkNameConstants.GET_ALL_TASKS,
     async () => {
         return await Tasks.getAllTasks();
     }
 );
 
 export const getTaskByID = createAsyncThunk(
-    'get-task-by-id',
+    ThunkNameConstants.GET_TASK_BY_ID,
     async (id: string) => {
         return await Tasks.getTaskByID(id);
     }
 );
 
 export const saveTask = createAsyncThunk(
-    'save-task',
+    ThunkNameConstants.SAVE_TASK,
     async (dto: TaskDTO, {dispatch}) => {
         await Tasks.saveTask(dto);
         dispatch(getAllTasks());
@@ -32,7 +33,7 @@ export const saveTask = createAsyncThunk(
 );
 
 export const removeTask = createAsyncThunk(
-    'save-task',
+    ThunkNameConstants.REMOVE_TASK,
     async (id: string, {dispatch}) => {
         await Tasks.removeTask(id);
         dispatch(getAllTasks());
