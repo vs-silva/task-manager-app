@@ -1,7 +1,7 @@
-import {afterAll, afterEach, beforeAll, describe, expect, it} from "vitest";
+import {afterAll, beforeAll, describe, expect, it} from "vitest";
 import {cleanup, render, RenderResult} from "@testing-library/react";
-import { TitleComponent } from '../title-component';
 import {faker} from "@faker-js/faker";
+import { TitleComponent } from '../title.component';
 
 describe('Title component tests', () => {
 
