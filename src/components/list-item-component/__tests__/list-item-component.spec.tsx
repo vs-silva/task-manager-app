@@ -23,7 +23,7 @@ describe('List item component tests', () => {
         expect(component.container.children.length).toEqual(0);
     });
 
-    it('Should render the ui if when item data is provided', () => {
+    it('Should render component UI if item data is provided', () => {
 
         component.rerender(<ListItemComponent
             item={fakeItem}
@@ -42,7 +42,7 @@ describe('List item component tests', () => {
         expect(deleteIcon).toBeTruthy();
     });
 
-    it.only('Should handle click events and emit specific event-types', () => {
+    it('Should handle click events and emit specific event-types', () => {
 
         const expectedEventTypes = /display-details|toggle-complete|remove/i;
 
