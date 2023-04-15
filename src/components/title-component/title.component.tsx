@@ -1,6 +1,4 @@
-import type {TitleComponentProps} from "./title-component.props";
-
-export function TitleComponent(props: TitleComponentProps): JSX.Element {
+export function TitleComponent(props: {title?: string}): JSX.Element {
 
     const {title} = props;
 

@@ -2,17 +2,23 @@ import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import {cleanup, fireEvent, render, RenderResult} from "@testing-library/react";
 import {faker} from "@faker-js/faker";
 import {ListItemComponent} from "../list-item.component";
-import type {ListItemEmitter} from "../list-item.emitter";
-import type {ListItemDTO} from "../list-item.dto";
+import {TaskDTO} from "../../../integration/tasks/core/dtos/task.dto";
+import {TaskStatusConstants} from "../../../integration/tasks/core/constants/task-status.constants";
+import {TaskPriorityConstants} from "../../../integration/tasks/core/constants/task-priority.constants";
+import type {TaskEmitterService} from "../../../integration/tasks/core/services/task-emitter.service";
 
 describe('List item component tests', () => {
 
     let component: RenderResult;
 
-    const fakeItem: ListItemDTO = {
+    const fakeItem: TaskDTO = {
         id: faker.datatype.uuid(),
         title: faker.random.words(2),
-        complete: faker.datatype.boolean()
+        description: faker.random.words(10),
+        complete: false,
+        canDelete: true,
+        status: TaskStatusConstants.OPEN,
+        priority: TaskPriorityConstants.LOW
     };
 
     beforeAll(() => {
@@ -26,7 +32,7 @@ describe('List item component tests', () => {
     it('Should render component UI if item data is provided', () => {
 
         component.rerender(<ListItemComponent
-            item={fakeItem}
+            task={fakeItem}
         />);
 
         const container = component.getByTestId('list-item-component__container');
@@ -52,14 +58,14 @@ describe('List item component tests', () => {
             return Promise.resolve();
         };
 
-        const fakeEmitter: ListItemEmitter = {
+        const fakeEmitter: TaskEmitterService = {
             emit: fakeEmit,
         };
 
         const spy = vi.spyOn(fakeEmitter, 'emit');
 
         component.rerender(<ListItemComponent
-            item={fakeItem}
+            task={fakeItem}
             emitter={fakeEmitter}
         />);
 

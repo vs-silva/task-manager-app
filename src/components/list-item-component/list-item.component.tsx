@@ -1,52 +1,43 @@
-import type {ListItemDTO} from "./list-item.dto";
-import type {ListItemEmitter} from "./list-item.emitter";
 import {MouseEvent} from "react";
-import {ListItemEventConstants} from "./list-item-event.constants";
+import type {TaskDTO} from "../../integration/tasks/core/dtos/task.dto";
+import type {TaskEmitterService} from "../../integration/tasks/core/services/task-emitter.service";
+import {TaskEventConstants} from "../../integration/tasks/core/constants/task-event.constants";
 
-export function ListItemComponent(props: {item?: ListItemDTO, emitter?: ListItemEmitter}) : JSX.Element {
+export function ListItemComponent(props: {task?: TaskDTO, emitter?: TaskEmitterService}) : JSX.Element {
 
-    const {item, emitter} = props;
+    const {task, emitter} = props;
 
-    if(!item) {
+    if(!task) {
         return (<></>);
     }
 
-    function handleClick(eventName: string, id: string): void {
+    function handleClick(event: MouseEvent<HTMLDivElement | HTMLHeadingElement | HTMLImageElement>, eventName: string, task: TaskDTO): void {
+        event.stopPropagation();
 
-        if(!emitter?.emit) {
+        if(!task.id || !emitter?.emit) {
             return;
         }
 
-        emitter?.emit(eventName,id);
+        emitter?.emit(eventName,task.id);
     }
 
-    return (<div className='list-item-component__container' data-testid='list-item-component__container' id={item.id}>
+    return (<div className='list-item-component__container' data-testid='list-item-component__container' id={task.id}>
 
         <div className='list-item-component__marker' data-testid='list-item-component__marker' onClick={
 
-            (event: MouseEvent<HTMLDivElement>) => {
-                event.stopPropagation();
-                handleClick(ListItemEventConstants.TOGGLE_COMPLETE, item.id);
-            }
+            (event: MouseEvent<HTMLDivElement>): void => handleClick(event, TaskEventConstants.TOGGLE_COMPLETE, task)
 
-        }>{item.complete}</div>
+        }>{task.complete}</div>
 
         <h3 className='list-item-component__title' data-testid='list-item-component__title' onClick={
 
-            (event: MouseEvent<HTMLHeadingElement>) => {
-                event.stopPropagation();
-                handleClick(ListItemEventConstants.DISPLAY_DETAILS, item.id);
-            }
+            (event: MouseEvent<HTMLHeadingElement>):void => handleClick(event, TaskEventConstants.DISPLAY_DETAILS, task)
 
-
-        }>{item.title}</h3>
+        }>{task.title}</h3>
 
         <img className='list-item-component__delete' data-testid='list-item-component__delete' src='' alt='' onClick={
 
-            (event: MouseEvent<HTMLImageElement>) => {
-                event.stopPropagation();
-                handleClick(ListItemEventConstants.REMOVE, item.id);
-            }
+            (event: MouseEvent<HTMLImageElement>):void => handleClick(event, TaskEventConstants.REMOVE, task)
 
         }/>
     </div>);

@@ -2,8 +2,10 @@ import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import {cleanup, fireEvent, render, RenderResult} from "@testing-library/react";
 import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../../../integration/tasks/core/dtos/task.dto";
-import {TasksStatusConstants} from "../../../integration/tasks/core/constants/tasks-status.constants";
-import {TasksPriorityConstants} from "../../../integration/tasks/core/constants/tasks-priority.constants";
+import {TaskStatusConstants} from "../../../integration/tasks/core/constants/task-status.constants";
+import {TaskPriorityConstants} from "../../../integration/tasks/core/constants/task-priority.constants";
+import {ListComponent} from "../list.component";
+import type {TaskEmitterService} from "../../../integration/tasks/core/services/task-emitter.service";
 
 describe('List component tests', () => {
 
@@ -16,8 +18,8 @@ describe('List component tests', () => {
             description: faker.random.words(10),
             complete: false,
             canDelete: true,
-            status: TasksStatusConstants.OPEN,
-            priority: TasksPriorityConstants.LOW
+            status: TaskStatusConstants.OPEN,
+            priority: TaskPriorityConstants.LOW
         },
         {
             id: faker.datatype.uuid(),
@@ -25,8 +27,8 @@ describe('List component tests', () => {
             description: faker.random.words(10),
             complete: true,
             canDelete: true,
-            status: TasksStatusConstants.CLOSED,
-            priority: TasksPriorityConstants.MEDIUM
+            status: TaskStatusConstants.CLOSED,
+            priority: TaskPriorityConstants.MEDIUM
         }
     ];
 
@@ -40,13 +42,15 @@ describe('List component tests', () => {
 
     it('Should render component UI if TaskDTO Collection is provided', () => {
         component.rerender(<ListComponent
-            items={fakeTaskCollection}
+            tasks={fakeTaskCollection}
         />);
 
         const container = component.getByTestId('list-component__container');
-        const listItem = component.getByTestId('list-item-component__container');
+        const list = component.getByTestId('list-component__list');
+        const listItem = component.getAllByTestId('list-item-component__container');
 
         expect(container).toBeTruthy();
+        expect(list).toBeTruthy();
         expect(listItem).toBeTruthy();
     });
 
@@ -58,14 +62,14 @@ describe('List component tests', () => {
             return Promise.resolve();
         }
 
-        const fakeEmitter: ListEmitter = {
+        const fakeEmitter: TaskEmitterService = {
           emit: fakeEmit
         };
 
         const spy = vi.spyOn(fakeEmitter, 'emit');
 
         component.rerender(<ListComponent
-            items={fakeTaskCollection}
+            tasks={fakeTaskCollection}
             emitter={fakeEmitter}
         />);
 
