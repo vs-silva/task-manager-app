@@ -24,25 +24,29 @@ export function HomePage(): JSX.Element {
         }
 
         Eventbus.on(TaskEventConstants.ADD_NEW, () => {
-            console.log('lets try again');
+            console.log('lets add a new task');
         });
 
         Eventbus.on(TaskEventConstants.DISPLAY_DETAILS, (id) => {
-            console.log('here Details for', id);
+            console.log('DISPLAY_DETAILS:::', id);
         });
 
+        Eventbus.on(TaskEventConstants.TOGGLE_COMPLETE, (id) => {
+            console.log('TOGGLE_COMPLETE:::', id);
+        });
 
+        Eventbus.on(TaskEventConstants.REMOVE, (id) => {
+            console.log('REMOVE:::', id);
+        });
 
     }, [initialLoad]);
 
 
 
     return (<div>
-        <p>{t('hello_world')}</p>
         {JSON.stringify(tasks)}
-        <p>{t('inner.msg')}</p>
 
-        <TitleComponent title={t('hello_world').toString()}/>
+        <TitleComponent title={t('header.title').toString()}/>
         <ListComponent tasks={tasks} emitter={Eventbus}/>
 
     </div>);

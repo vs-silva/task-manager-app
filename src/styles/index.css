@@ -50,8 +50,8 @@ body {
 }
 
 .list-item-component__container > .list-item-component__marker {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   background-color: red;
   border: 2px solid var(--base-text-color);
   border-radius: 50%;
@@ -66,7 +66,7 @@ body {
 .list-item-component__container > .list-item-component__delete {
   display: block;
   background-color: blue;
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 

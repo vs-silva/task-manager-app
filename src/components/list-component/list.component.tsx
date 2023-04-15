@@ -3,10 +3,12 @@ import {ListItemComponent} from "../list-item-component/list-item.component";
 import {MouseEvent} from "react";
 import {TaskEventConstants} from "../../integration/tasks/core/constants/task-event.constants";
 import {TaskEmitterService} from "../../integration/tasks/core/services/task-emitter.service";
+import {useTranslation} from "react-i18next";
 
 export function ListComponent(props: {tasks?: TaskDTO[], emitter?: TaskEmitterService}): JSX.Element {
 
     const {tasks, emitter} = props;
+    const { t } = useTranslation();
 
     if(!tasks){
         return (<></>);
@@ -46,7 +48,7 @@ export function ListComponent(props: {tasks?: TaskDTO[], emitter?: TaskEmitterSe
 
             (event: MouseEvent<HTMLButtonElement>):void => handleClick(event,TaskEventConstants.ADD_NEW)
 
-        }></button>
+        }>{t('list.addLabel').toString()}</button>
 
     </div>);
 }

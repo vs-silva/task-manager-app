@@ -1,8 +1,10 @@
 export default {
     translation: {
-        hello_world: 'Hello world',
-        inner: {
-            msg: 'this is a inner message'
+        header: {
+            title: 'Task Manager'
+        },
+        list: {
+            addLabel: '+ New task'
         }
     }
 }
