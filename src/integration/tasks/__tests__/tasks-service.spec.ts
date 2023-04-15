@@ -2,7 +2,7 @@ import {describe, it, vi, expect} from "vitest";
 import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../core/dtos/task.dto";
 import Tasks from "../index";
-import {TasksPriorityConstants} from "../core/constants/tasks-priority.constants";
+import {TaskPriorityConstants} from "../core/constants/task-priority.constants";
 
 describe('Tasks service integration tests', () => {
 
@@ -98,7 +98,7 @@ describe('Tasks service integration tests', () => {
             const fakeTaskDTO = <TaskDTO>{
                 title: faker.random.words(2),
                 description: faker.random.words(10),
-                priority: TasksPriorityConstants.LOW,
+                priority: TaskPriorityConstants.LOW,
                 complete: faker.datatype.boolean()
             };
 
@@ -128,7 +128,7 @@ describe('Tasks service integration tests', () => {
             const fakeTaskDTO = <TaskDTO>{
                 title: faker.random.words(2),
                 description: faker.random.words(10),
-                priority: TasksPriorityConstants.LOW,
+                priority: TaskPriorityConstants.LOW,
                 complete: faker.datatype.boolean()
             };
 

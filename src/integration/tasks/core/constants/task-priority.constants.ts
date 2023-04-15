@@ -1,4 +1,4 @@
-export const TasksPriorityConstants = {
+export const TaskPriorityConstants = {
     LOW: 'low',
     MEDIUM: 'medium',
     HIGH: 'high'
