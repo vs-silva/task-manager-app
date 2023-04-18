@@ -98,8 +98,7 @@ describe('Tasks service integration tests', () => {
             const fakeTaskDTO = <TaskDTO>{
                 title: faker.random.words(2),
                 description: faker.random.words(10),
-                priority: TaskPriorityConstants.LOW,
-                complete: faker.datatype.boolean()
+                priority: TaskPriorityConstants.LOW
             };
 
             const initialTasks = await Tasks.getAllTasks();
@@ -128,8 +127,7 @@ describe('Tasks service integration tests', () => {
             const fakeTaskDTO = <TaskDTO>{
                 title: faker.random.words(2),
                 description: faker.random.words(10),
-                priority: TaskPriorityConstants.LOW,
-                complete: faker.datatype.boolean()
+                priority: TaskPriorityConstants.LOW
             };
 
             await Tasks.saveTask(fakeTaskDTO);

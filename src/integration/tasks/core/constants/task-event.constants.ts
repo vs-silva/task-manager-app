@@ -3,5 +3,6 @@ export const TaskEventConstants = {
     DISPLAY_DETAILS: 'display-details',
     TOGGLE_COMPLETE: 'toggle-complete',
     REMOVE: 'remove',
-    SAVE: 'save'
+    SAVE: 'save',
+    CANCEL: 'cancel'
 } as const;

@@ -7,11 +7,23 @@ export function MockDataWriterAdapter(): TasksServiceWriterDrivenPort {
     const data = MockData as TaskRequestDTO[];
 
     async function save(dto: TaskRequestDTO): Promise<void> {
+
         if(!dto.id) {
             dto.id = uuidv4();
+            data.push(dto);
+            return;
         }
 
-        data.push(dto);
+        const item = data.find(x => x.id === dto.id);
+
+        if(!item) {
+            return;
+        }
+
+        item.title = dto.title;
+        item.description = dto.description;
+        item.priority = dto.priority;
+        item.complete = dto.complete;
     }
 
     async function remove(id: string): Promise<void> {

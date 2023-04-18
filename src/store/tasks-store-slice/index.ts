@@ -60,8 +60,6 @@ function builderProcessor(builder): void {
     builder.addCase(saveTask.fulfilled, () => {
         return;
     });
-
-
 }
 
 export default createSlice({

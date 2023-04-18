@@ -15,15 +15,21 @@ describe('Task component tests', () => {
     const fakeTask: TaskDTO = {
         id: faker.datatype.uuid(),
         title: faker.random.words(2),
-        description: faker.random.words(10),
+        description: faker.random.words(3),
         complete: false,
         canDelete: true,
         status: TaskStatusConstants.OPEN,
         priority: TaskPriorityConstants.LOW
     };
 
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const statusOptionsRegex = /open|closed/i;
+    const priorityOptionsRegex = /high|medium|low/i;
+    const saveEventType = /save/i;
+    const cancelEventType = /cancel/i;
+
     beforeAll( () => {
-        component = render(<TaskComponent />);
+        component = render(<TaskComponent show={false}/>);
     });
 
     it('Should not display any element', () => {
@@ -32,7 +38,7 @@ describe('Task component tests', () => {
 
     it('Should display prefilled task editor with the provided taskDTO', () => {
 
-        component.rerender(<TaskComponent task={fakeTask} />);
+        component.rerender(<TaskComponent show={true} task={fakeTask} />);
 
         const container = component.getByTestId('task-component__container');
         const titleLabel = component.getByTestId('task-component__title-label');
@@ -67,16 +73,11 @@ describe('Task component tests', () => {
         expect(cancelButton.textContent).toEqual('editor.cancelLabel');
     });
 
-    it.only('Should only send existent task to be saved if any of its fields has been updated/changed', async () => {
-
-        const expectedEventType = /save/i;
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        const statusOptionsRegex = /open|closed/i;
-        const priorityOptionsRegex = /high|medium|low/i;
+    it('Should only send existent task to be saved if any of its fields has been updated/changed', async () => {
 
         const fakeExtraDescriptionToAppend = faker.random.words(5);
         const fakeSaveEmit = (name: string, value: TaskDTO): Promise<void> => {
-            expect(name).toMatch(expectedEventType);
+            expect(name).toMatch(saveEventType);
 
             expect(value).toEqual(expect.objectContaining({
                 id: expect.any(String),
@@ -103,8 +104,7 @@ describe('Task component tests', () => {
         };
 
         const spy = vi.spyOn(fakeEmitter, 'emit');
-
-        component.rerender(<TaskComponent task={fakeTask} emitter={fakeEmitter}/>);
+        component.rerender(<TaskComponent show={true} task={fakeTask} emitter={fakeEmitter}/>);
 
         const titleInput = component.getByTestId('task-component__title-input');
         const descriptionTextArea = component.getByTestId('task-component__description-text-area');
@@ -126,28 +126,20 @@ describe('Task component tests', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    /*it('Should display prefilled task editor with the provided taskDTO 222', () => {
+    it('Should display empty task editor to allow creating new task', () => {
 
-        const expectedEventType = /save/i;
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        const statusOptionsRegex = /open|closed/i;
-        const priorityOptionsRegex = /high|medium|low/i;
-
+        const fakeTitleText = faker.random.words(3);
         const fakeSaveEmit = (name: string, value: TaskDTO): Promise<void> => {
-            expect(name).toMatch(expectedEventType);
+            expect(name).toMatch(saveEventType);
 
             expect(value).toEqual(expect.objectContaining({
-                id: expect.any(String),
                 title: expect.any(String),
                 description: expect.any(String),
-                status: expect.any(String),
                 priority: expect.any(String),
-                complete: expect.any(Boolean),
-                canDelete: expect.any(Boolean)
             }));
 
-            expect(value.id).toMatch(uuidRegex);
-            expect(value.status).toMatch(statusOptionsRegex);
+            expect(value.title).not.toBeFalsy();
+            expect(value.title).toContain(fakeTitleText);
             expect(value.priority).toMatch(priorityOptionsRegex);
 
             return Promise.resolve();
@@ -157,19 +149,56 @@ describe('Task component tests', () => {
             emit: fakeSaveEmit
         };
 
+        const fakeNewTask:TaskDTO = {
+            title: faker.datatype.string(0),
+            complete: false,
+            priority: TaskPriorityConstants.LOW
+        };
+
         const spy = vi.spyOn(fakeEmitter, 'emit');
+        component.rerender(<TaskComponent show={true} task={fakeNewTask} emitter={fakeEmitter}/>);
 
+        const titleInput = component.getByTestId('task-component__title-input');
+        const saveButton = component.getByTestId('task-component__save-button');
+        expect(titleInput).toBeTruthy();
+        expect(saveButton).toBeTruthy();
 
+        fireEvent.input(titleInput, {target: {value: fakeTitleText}});
 
         fireEvent.click(saveButton);
         expect(spy).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledOnce();
 
-    });*/
+    });
 
-    it.todo('Should not save non-edited existent task');
+    it.only('cancel should emit that the editor has to be closed and and reset', () => {
 
-    it.todo('Should display empty task editor to allow creating new task');
+        const fakeCloseEmit = (name: string): Promise<void> => {
+            expect(name).toMatch(cancelEventType);
+            return Promise.resolve();
+        };
+
+        const fakeEmitter: TaskEmitterService = {
+            emit: fakeCloseEmit
+        };
+
+        const spy = vi.spyOn(fakeEmitter, 'emit');
+
+        const fakeNewTask:TaskDTO = {
+            title: faker.datatype.string(0),
+            complete: false,
+            priority: TaskPriorityConstants.LOW
+        };
+
+        component.rerender(<TaskComponent show={true} task={fakeNewTask} emitter={fakeEmitter}/>);
+
+        const cancelButton = component.getByTestId('task-component__cancel-button');
+        expect(cancelButton).toBeTruthy();
+
+        fireEvent.click(cancelButton);
+        expect(spy).toHaveBeenCalled();
+    });
+
+
 
 
 

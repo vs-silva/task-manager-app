@@ -18,13 +18,19 @@ async function mapToTasksCollection(data: TaskResponseDTO[]): Promise<TaskDTO[]>
 }
 
 async function mapToTaskRequest(dto: TaskDTO): Promise<TaskRequestDTO> {
-    return <TaskRequestDTO> {
-        id: dto.id,
+
+    const result: TaskRequestDTO = {
         title: dto.title,
-        description: dto.description,
-        complete: dto.complete,
-        priority: dto.priority
+        priority: dto.priority,
+        description: dto.description || '',
+        complete: dto.complete || false
     };
+
+    if(dto.id) {
+        result.id = dto.id
+    }
+
+    return result;
 }
 
 export const TasksMapper: TasksMapperInterface = {

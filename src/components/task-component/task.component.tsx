@@ -5,15 +5,16 @@ import { useTranslation } from 'react-i18next';
 import {TaskPriorityConstants} from "../../integration/tasks/core/constants/task-priority.constants";
 import {TaskEventConstants} from "../../integration/tasks/core/constants/task-event.constants";
 
-export function TaskComponent(props: {task?:TaskDTO, emitter?: TaskEmitterService}): JSX.Element {
+export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: TaskEmitterService}): JSX.Element {
 
     const { t } = useTranslation();
 
-    const {task, emitter} = props;
+    const {show,task, emitter} = props;
 
     const [titleValue, setTitleValue] = useState('');
     const [descriptionValue, setDescriptionValue] = useState('');
     const [priorityValue, setPriorityValue] = useState('');
+    const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
 
@@ -21,11 +22,14 @@ export function TaskComponent(props: {task?:TaskDTO, emitter?: TaskEmitterServic
             return;
         }
 
-        setPriorityValue(task.priority);
+        if(task.id) {
+            setIsEditMode(true);
+        }
+
     },[task]);
 
 
-    if(!task) {
+    if(!show || !task) {
         return (<></>);
     }
 
@@ -82,30 +86,46 @@ export function TaskComponent(props: {task?:TaskDTO, emitter?: TaskEmitterServic
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
 
-                const dto: TaskDTO = {
+                const result: TaskDTO = {
                     title: titleValue || task.title,
-                    description: descriptionValue || task.description,
-                    priority: priorityValue || task.priority,
-                    complete: task.complete,
-                    status: task.status,
-                    canDelete: task.canDelete
+                    description:descriptionValue || task?.description || '',
+                    priority: priorityValue || TaskPriorityConstants.LOW
                 };
 
-                if(task.id){
-                    dto.id = task.id;
+                if(isEditMode) {
+                    result.id = task.id;
+                    result.status = task?.status;
+                    result.canDelete = task?.canDelete;
+                    result.complete = task?.complete;
+                    result.priority = priorityValue || task.priority;
                 }
 
-                if(dto.title !== task.title || dto.description !== task.description || dto.priority !== task.priority) {
-
-                    console.log('THIS HERE:::',dto);
-
-                    emitter?.emit(TaskEventConstants.SAVE, dto);
+                if(!result.title) {
+                    return;
                 }
+
+                if(isEditMode && result.title === task?.title && result.description === task?.description && result.priority === task.priority) {
+                    return;
+                }
+
+                emitter?.emit(TaskEventConstants.SAVE, result);
             }
 
         }>{t('editor.saveLabel').toString()}</button>
 
-        <button type="button" className="task-component__cancel-button" data-testid="task-component__cancel-button">{t('editor.cancelLabel').toString()}</button>
+        <button type="button"
+                className="task-component__cancel-button"
+                data-testid="task-component__cancel-button" onClick={
+
+            (event: MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+
+                setTitleValue('');
+
+                emitter?.emit(TaskEventConstants.CANCEL);
+            }
+
+        }>{t('editor.cancelLabel').toString()}</button>
 
     </div>);
 }

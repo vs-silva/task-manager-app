@@ -4,6 +4,7 @@ import type {TasksServiceReaderDrivenPort} from "./ports/tasks-service-reader-dr
 import type {TasksServiceWriterDrivenPort} from "./ports/tasks-service-writer-driven.port";
 import type {TaskRequestDTO} from "./core/dtos/task-request.dto";
 import {TasksMapper} from "./core/mappers/tasks.mapper";
+import {TaskResponseDTO} from "./core/dtos/task-response.dto";
 
 export function TasksService(reader: TasksServiceReaderDrivenPort, writer: TasksServiceWriterDrivenPort):TasksServiceDriverPort {
     async function getAllTasks(): Promise<TaskDTO[]> {
