@@ -23,7 +23,7 @@ describe('Task component tests', () => {
     };
 
     beforeAll( () => {
-        component = render(<TaskComponent show={false} />);
+        component = render(<TaskComponent />);
     });
 
     it('Should not display any element', () => {
@@ -32,7 +32,7 @@ describe('Task component tests', () => {
 
     it('Should display prefilled task editor with the provided taskDTO', () => {
 
-        component.rerender(<TaskComponent show={true} task={fakeTask} />);
+        component.rerender(<TaskComponent task={fakeTask} />);
 
         const container = component.getByTestId('task-component__container');
         const titleLabel = component.getByTestId('task-component__title-label');
@@ -67,14 +67,14 @@ describe('Task component tests', () => {
         expect(cancelButton.textContent).toEqual('editor.cancelLabel');
     });
 
-    it.only('Should only send existent task to be saved if any of its fields has been updated/changed', () => {
+    it.only('Should only send existent task to be saved if any of its fields has been updated/changed', async () => {
 
         const expectedEventType = /save/i;
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         const statusOptionsRegex = /open|closed/i;
         const priorityOptionsRegex = /high|medium|low/i;
 
-        const newDescription = faker.random.words(10);
+        const fakeExtraDescriptionToAppend = faker.random.words(5);
         const fakeSaveEmit = (name: string, value: TaskDTO): Promise<void> => {
             expect(name).toMatch(expectedEventType);
 
@@ -92,10 +92,8 @@ describe('Task component tests', () => {
             expect(value.status).toMatch(statusOptionsRegex);
             expect(value.priority).toMatch(priorityOptionsRegex);
 
-            console.log(value.description);
-
             expect(value.title).not.toBeFalsy();
-            expect(value.description).toEqual(newDescription);
+            expect(value.description).toContain(fakeExtraDescriptionToAppend);
 
             return Promise.resolve();
         };
@@ -106,7 +104,7 @@ describe('Task component tests', () => {
 
         const spy = vi.spyOn(fakeEmitter, 'emit');
 
-        component.rerender(<TaskComponent show={true} task={fakeTask} emitter={fakeEmitter}/>);
+        component.rerender(<TaskComponent task={fakeTask} emitter={fakeEmitter}/>);
 
         const titleInput = component.getByTestId('task-component__title-input');
         const descriptionTextArea = component.getByTestId('task-component__description-text-area');
@@ -121,7 +119,8 @@ describe('Task component tests', () => {
         fireEvent.click(saveButton);
         expect(spy).not.toHaveBeenCalled();
 
-        userEvent.type(descriptionTextArea, newDescription);
+        await userEvent
+            .type(descriptionTextArea, fakeExtraDescriptionToAppend);
 
         fireEvent.click(saveButton);
         expect(spy).toHaveBeenCalled();

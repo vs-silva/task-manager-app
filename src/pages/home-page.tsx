@@ -11,7 +11,6 @@ import {ListComponent} from "../components/list-component/list.component";
 import {TaskComponent} from "../components/task-component/task.component";
 export function HomePage(): JSX.Element {
     const [initialLoad, setInitialLoad] = useState(true);
-    const [showEditor, setShowEditor] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
     const { t } = useTranslation();
 
@@ -42,6 +41,10 @@ export function HomePage(): JSX.Element {
             console.log('REMOVE:::', id);
         });
 
+        Eventbus.on(TaskEventConstants.SAVE, (dto) => {
+            console.log('SAVE:::', dto);
+        });
+
     }, [initialLoad]);
 
     return (<div>
@@ -50,7 +53,7 @@ export function HomePage(): JSX.Element {
 
         <TitleComponent title={t('header.title').toString()}/>
         <ListComponent tasks={tasks} emitter={Eventbus}/>
-        <TaskComponent show={showEditor} task={task} />
+        <TaskComponent task={task} emitter={Eventbus}/>
 
     </div>);
 }

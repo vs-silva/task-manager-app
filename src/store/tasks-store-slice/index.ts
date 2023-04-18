@@ -28,7 +28,6 @@ export const saveTask = createAsyncThunk(
     async (dto: TaskDTO, {dispatch}) => {
         await Tasks.saveTask(dto);
         dispatch(getAllTasks());
-        return;
     }
 );
 
@@ -37,7 +36,6 @@ export const removeTask = createAsyncThunk(
     async (id: string, {dispatch}) => {
         await Tasks.removeTask(id);
         dispatch(getAllTasks());
-        return;
     }
 );
 

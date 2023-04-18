@@ -5,17 +5,18 @@ import { useTranslation } from 'react-i18next';
 import {TaskPriorityConstants} from "../../integration/tasks/core/constants/task-priority.constants";
 import {TaskEventConstants} from "../../integration/tasks/core/constants/task-event.constants";
 
-export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: TaskEmitterService}): JSX.Element {
+export function TaskComponent(props: {task?:TaskDTO, emitter?: TaskEmitterService}): JSX.Element {
 
     const { t } = useTranslation();
 
-    const {show, task, emitter} = props;
+    const {task, emitter} = props;
 
     const [titleValue, setTitleValue] = useState('');
     const [descriptionValue, setDescriptionValue] = useState('');
     const [priorityValue, setPriorityValue] = useState('');
 
     useEffect(() => {
+
         if(!task) {
             return;
         }
@@ -24,17 +25,8 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
     },[task]);
 
 
-    if(!show) {
+    if(!task) {
         return (<></>);
-    }
-
-    function handleClick(event: MouseEvent<HTMLButtonElement>, eventName: string, task: TaskDTO): void {
-        event.stopPropagation();
-
-        console.log(eventName);
-        console.log(task);
-
-        emitter?.emit(eventName, task);
     }
 
     return (<div className="task-component__container" data-testid="task-component__container">
@@ -44,7 +36,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                className="task-component__title-input"
                data-testid="task-component__title-input"
                id="taskTitleInput"
-               defaultValue={task?.title ?? titleValue} onChange={
+               defaultValue={task.title ?? titleValue} onChange={
 
             (event: ChangeEvent<HTMLInputElement>) => {
                 event.stopPropagation();
@@ -57,7 +49,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
         <textarea className="task-component__description-text-area"
                   data-testid="task-component__description-text-area"
                   id="taskDescriptionTextArea"
-                  defaultValue={task?.description ?? descriptionValue} onChange={
+                  defaultValue={task.description ?? descriptionValue} onChange={
 
             (event: ChangeEvent<HTMLTextAreaElement>) => {
                 event.stopPropagation();
@@ -69,7 +61,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
         <select className="task-component__priority-selector"
                 data-testid="task-component__priority-selector"
                 value={priorityValue}
-                disabled={task?.complete} onChange={
+                disabled={task.complete} onChange={
 
                 (event: ChangeEvent<HTMLSelectElement>) => {
                     event.stopPropagation();
@@ -90,19 +82,25 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
 
+                const dto: TaskDTO = {
+                    title: titleValue || task.title,
+                    description: descriptionValue || task.description,
+                    priority: priorityValue || task.priority,
+                    complete: task.complete,
+                    status: task.status,
+                    canDelete: task.canDelete
+                };
 
-
-                const updated: TaskDTO = {
-                    id: task?.id,
-                    title: titleValue || (task?.title as string),
-                    description: descriptionValue || task?.description,
-                    priority: priorityValue || (task?.priority as string),
-                    complete: (task?.complete as boolean),
-
+                if(task.id){
+                    dto.id = task.id;
                 }
 
-                console.log(updated);
+                if(dto.title !== task.title || dto.description !== task.description || dto.priority !== task.priority) {
 
+                    console.log('THIS HERE:::',dto);
+
+                    emitter?.emit(TaskEventConstants.SAVE, dto);
+                }
             }
 
         }>{t('editor.saveLabel').toString()}</button>
