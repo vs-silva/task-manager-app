@@ -4,12 +4,14 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllTasks} from "../store/tasks-store-slice";
 import {AppDispatch} from "../store";
 import type {TaskDTO} from "../integration/tasks/core/dtos/task.dto";
-import {ListComponent} from "../components/list-component/list.component";
 import Eventbus from "../eventbus";
 import {TaskEventConstants} from "../integration/tasks/core/constants/task-event.constants";
 import {TitleComponent} from "../components/title-component/title.component";
+import {ListComponent} from "../components/list-component/list.component";
+import {TaskComponent} from "../components/task-component/task.component";
 export function HomePage(): JSX.Element {
     const [initialLoad, setInitialLoad] = useState(true);
+    const [showEditor, setShowEditor] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
     const { t } = useTranslation();
 
@@ -17,6 +19,7 @@ export function HomePage(): JSX.Element {
     const {tasks, task }: {tasks: TaskDTO[], task:TaskDTO} = useSelector(state => state.tasksStoreSlice);
 
     useEffect(() => {
+
         if(initialLoad) {
             setInitialLoad(false);
             dispatch(getAllTasks());
@@ -41,13 +44,13 @@ export function HomePage(): JSX.Element {
 
     }, [initialLoad]);
 
-
-
     return (<div>
         {JSON.stringify(tasks)}
 
+
         <TitleComponent title={t('header.title').toString()}/>
         <ListComponent tasks={tasks} emitter={Eventbus}/>
+        <TaskComponent show={showEditor} task={task} />
 
     </div>);
 }
