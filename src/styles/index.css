@@ -15,6 +15,7 @@
 
 body {
   background-color: var(--base-blue-color);
+  padding-top: 100px;
 }
 
 /* layout */
@@ -29,6 +30,8 @@ body {
   color: white;
   text-align: center;
   padding: 20px 0;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
+  margin-bottom: 40px;
 }
 
 .title-component__container > .title-component__title {
@@ -37,9 +40,37 @@ body {
 }
 
 /*List*/
+.list-component__container {
+  background-color: white;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
+  padding: 40px 40px 0 40px;
+  margin-bottom: 60px;
+}
+
 .list-component__container > .list-component__list {
   list-style: none;
   padding: 0;
+  margin-bottom: 20px;
+}
+
+.list-component__container > .list-component__add-button {
+  display: block;
+  margin: 0 auto;
+  border: none;
+  color: white;
+  font-weight: bolder;
+  border-radius: 20px;
+  background-color: var(--base-purple-color);
+  padding: 10px 20px;
+  position: relative;
+  top: 20px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
+  font-size: 18px;
+}
+
+.task-component__container {
+  background-color: white;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
 }
 
 /*ListItem*/
@@ -60,13 +91,64 @@ body {
 .list-item-component__container >.list-item-component__title {
   margin: 0;
   flex-grow: 2;
-  background-color: green;
 }
 
 .list-item-component__container > .list-item-component__delete {
   display: block;
-  background-color: blue;
   width: 10px;
   height: 10px;
 }
 
+
+/* Task component container */
+.task-component__container {
+  padding: 40px;
+}
+
+.task-component__container > .task-component__title-label {
+  display: block;
+  width: 100%;
+}
+
+.task-component__container > .task-component__title-input {
+  display: block;
+  width: 95%;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+}
+
+.task-component__container > .task-component__description-label {
+  display: block;
+  width: 100%;
+}
+
+.task-component__container > .task-component__description-text-area {
+  display: block;
+  width: 95%;
+  height: 100px;
+  resize: none;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+}
+
+.task-component__container > .task-component__priority-selector {
+  display: block;
+  width: 99%;
+  padding: 5px 10px;
+  margin-bottom: 20px;
+}
+
+.task-component__container > .task-component__save-button {
+  text-align: center;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.task-component__container > .task-component__close-button {
+  text-align: center;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px;
+}
