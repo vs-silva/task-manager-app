@@ -4,6 +4,6 @@ export interface TaskDTO {
     description?: string;
     status?: string;
     priority: string;
-    complete: boolean;
+    complete?: boolean;
     canDelete?: boolean;
 }

@@ -28,7 +28,21 @@ export const saveTask = createAsyncThunk(
     async (dto: TaskDTO, {dispatch}) => {
         await Tasks.saveTask(dto);
         dispatch(getAllTasks());
-        return;
+    }
+);
+
+export const toggleComplete = createAsyncThunk(
+    ThunkNameConstants.MARK_COMPLETE,
+    async (id: string, {dispatch}) => {
+        const task = await Tasks.getTaskByID(id);
+
+        if(!task) {
+            return;
+        }
+
+        task.complete = !task.complete;
+        dispatch(saveTask(task));
+        dispatch(getAllTasks());
     }
 );
 
@@ -37,7 +51,6 @@ export const removeTask = createAsyncThunk(
     async (id: string, {dispatch}) => {
         await Tasks.removeTask(id);
         dispatch(getAllTasks());
-        return;
     }
 );
 
@@ -63,7 +76,9 @@ function builderProcessor(builder): void {
         return;
     });
 
-
+    builder.addCase(toggleComplete.fulfilled, () => {
+        return;
+    });
 }
 
 export default createSlice({
