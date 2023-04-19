@@ -4,5 +4,5 @@ export const TaskEventConstants = {
     TOGGLE_COMPLETE: 'toggle-complete',
     REMOVE: 'remove',
     SAVE: 'save',
-    CANCEL: 'cancel'
+    CLOSE: 'close'
 } as const;

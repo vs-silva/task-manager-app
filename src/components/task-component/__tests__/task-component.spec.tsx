@@ -26,7 +26,7 @@ describe('Task component tests', () => {
     const statusOptionsRegex = /open|closed/i;
     const priorityOptionsRegex = /high|medium|low/i;
     const saveEventType = /save/i;
-    const cancelEventType = /cancel/i;
+    const closeEventType = /close/i;
 
     beforeAll( () => {
         component = render(<TaskComponent show={false}/>);
@@ -47,7 +47,7 @@ describe('Task component tests', () => {
         const descriptionTextArea = component.getByTestId('task-component__description-text-area');
         const prioritySelector = component.getByTestId('task-component__priority-selector');
         const saveButton = component.getByTestId('task-component__save-button');
-        const cancelButton = component.getByTestId('task-component__cancel-button');
+        const closeButton = component.getByTestId('task-component__close-button');
 
         expect(container).toBeTruthy();
 
@@ -69,8 +69,8 @@ describe('Task component tests', () => {
         expect(saveButton).toBeTruthy();
         expect(saveButton.textContent).toEqual('editor.saveLabel');
 
-        expect(cancelButton).toBeTruthy();
-        expect(cancelButton.textContent).toEqual('editor.cancelLabel');
+        expect(closeButton).toBeTruthy();
+        expect(closeButton.textContent).toEqual('editor.closeLabel');
     });
 
     it('Should only send existent task to be saved if any of its fields has been updated/changed', async () => {
@@ -170,10 +170,10 @@ describe('Task component tests', () => {
 
     });
 
-    it.only('cancel should emit that the editor has to be closed and and reset', () => {
+    it('cancel should emit that the editor has to be closed and and reset', () => {
 
         const fakeCloseEmit = (name: string): Promise<void> => {
-            expect(name).toMatch(cancelEventType);
+            expect(name).toMatch(closeEventType);
             return Promise.resolve();
         };
 
@@ -191,17 +191,12 @@ describe('Task component tests', () => {
 
         component.rerender(<TaskComponent show={true} task={fakeNewTask} emitter={fakeEmitter}/>);
 
-        const cancelButton = component.getByTestId('task-component__cancel-button');
-        expect(cancelButton).toBeTruthy();
+        const closeButton = component.getByTestId('task-component__close-button');
+        expect(closeButton).toBeTruthy();
 
-        fireEvent.click(cancelButton);
+        fireEvent.click(closeButton);
         expect(spy).toHaveBeenCalled();
     });
-
-
-
-
-
 
     afterAll(() => {
         component.unmount();

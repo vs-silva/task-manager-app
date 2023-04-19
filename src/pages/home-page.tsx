@@ -28,6 +28,7 @@ export function HomePage(): JSX.Element {
         }
 
         Eventbus.on(TaskEventConstants.ADD_NEW, () => {
+            dispatch(clearTask());
             setShowEditor(true);
         });
 
@@ -43,15 +44,15 @@ export function HomePage(): JSX.Element {
         Eventbus.on(TaskEventConstants.REMOVE, async (id) => {
             setShowEditor(false);
             await dispatch(removeTask(id as string));
-            //TODO: if task is being displayed close the editor then remove it
         });
 
         Eventbus.on(TaskEventConstants.SAVE, async (dto) => {
             setShowEditor(false);
             await dispatch(saveTask(dto as TaskDTO));
+            dispatch(clearTask());
         });
 
-        Eventbus.on(TaskEventConstants.CANCEL, () => {
+        Eventbus.on(TaskEventConstants.CLOSE, () => {
             dispatch(clearTask());
             setShowEditor(false);
         });

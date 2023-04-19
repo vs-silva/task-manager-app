@@ -14,7 +14,9 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
     const [titleValue, setTitleValue] = useState('');
     const [descriptionValue, setDescriptionValue] = useState('');
     const [priorityValue, setPriorityValue] = useState('');
+    const [completeValue, setCompleteValue] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [saveDisabled, setSaveDisabled] = useState(true);
 
     useEffect(() => {
 
@@ -22,16 +24,20 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
             return;
         }
 
-        if(task.id) {
-            setIsEditMode(true);
-        }
+        setTitleValue(task.title || '');
+        setDescriptionValue(task.description as string || '');
+        setPriorityValue(task.priority || TaskPriorityConstants.LOW);
+        setCompleteValue(task.complete || false);
+        setSaveDisabled(true);
+        setIsEditMode( !!task.id);
 
-    },[task]);
+    },[show, task]);
 
 
     if(!show || !task) {
         return (<></>);
     }
+
 
     return (<div className="task-component__container" data-testid="task-component__container">
 
@@ -40,10 +46,24 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                className="task-component__title-input"
                data-testid="task-component__title-input"
                id="taskTitleInput"
-               defaultValue={task.title ?? titleValue} onChange={
+               defaultValue={titleValue}
+               disabled={completeValue}
+               onChange={
 
             (event: ChangeEvent<HTMLInputElement>) => {
                 event.stopPropagation();
+
+                if(event.target.value.trim()) {
+                    setSaveDisabled(false);
+                }
+                else {
+                    setSaveDisabled(true);
+                }
+
+                if(isEditMode && event.target.value === task?.title) {
+                    setSaveDisabled(true);
+                }
+
                 setTitleValue(event.target.value);
             }
 
@@ -53,10 +73,26 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
         <textarea className="task-component__description-text-area"
                   data-testid="task-component__description-text-area"
                   id="taskDescriptionTextArea"
-                  defaultValue={task.description ?? descriptionValue} onChange={
+                  defaultValue={descriptionValue}
+                  disabled={completeValue} onChange={
 
             (event: ChangeEvent<HTMLTextAreaElement>) => {
                 event.stopPropagation();
+
+                if(!isEditMode) {
+                    setSaveDisabled(false);
+                }
+                else {
+
+                    if(event.target.value !== task?.description) {
+                        setSaveDisabled(false);
+                    }
+                    else {
+                        setSaveDisabled(true);
+                    }
+
+                }
+
                 setDescriptionValue(event.target.value);
             }
 
@@ -65,10 +101,26 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
         <select className="task-component__priority-selector"
                 data-testid="task-component__priority-selector"
                 value={priorityValue}
-                disabled={task.complete} onChange={
+                disabled={completeValue}
+                onChange={
 
                 (event: ChangeEvent<HTMLSelectElement>) => {
                     event.stopPropagation();
+
+                    if(!isEditMode) {
+                        setSaveDisabled(false);
+                    }
+                    else {
+
+                        if(event.target.value !== task?.priority) {
+                            setSaveDisabled(false);
+                        }
+                        else {
+                            setSaveDisabled(true);
+                        }
+
+                    }
+
                     setPriorityValue(event.target.value);
                 }
         }>
@@ -81,51 +133,41 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
         <button type="button"
                 className="task-component__save-button"
-                data-testid="task-component__save-button" onClick={
+                data-testid="task-component__save-button"
+                disabled={saveDisabled}
+                onClick={
 
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
 
-                const result: TaskDTO = {
-                    title: titleValue || task.title,
-                    description:descriptionValue || task?.description || '',
-                    priority: priorityValue || TaskPriorityConstants.LOW
+                const createUpdateDTO: TaskDTO = {
+                    title: titleValue,
+                    description: descriptionValue,
+                    priority: priorityValue,
+                    complete: completeValue
                 };
 
                 if(isEditMode) {
-                    result.id = task.id;
-                    result.status = task?.status;
-                    result.canDelete = task?.canDelete;
-                    result.complete = task?.complete;
-                    result.priority = priorityValue || task.priority;
+                    createUpdateDTO.id = task?.id;
+                    createUpdateDTO.status = task?.status;
+                    createUpdateDTO.canDelete = task?.canDelete;
                 }
 
-                if(!result.title) {
-                    return;
-                }
-
-                if(isEditMode && result.title === task?.title && result.description === task?.description && result.priority === task.priority) {
-                    return;
-                }
-
-                emitter?.emit(TaskEventConstants.SAVE, result);
+                emitter?.emit(TaskEventConstants.SAVE, createUpdateDTO);
             }
 
         }>{t('editor.saveLabel').toString()}</button>
 
         <button type="button"
-                className="task-component__cancel-button"
-                data-testid="task-component__cancel-button" onClick={
+                className="task-component__close-button"
+                data-testid="task-component__close-button" onClick={
 
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
-
-                setTitleValue('');
-
-                emitter?.emit(TaskEventConstants.CANCEL);
+                emitter?.emit(TaskEventConstants.CLOSE);
             }
 
-        }>{t('editor.cancelLabel').toString()}</button>
+        }>{t('editor.closeLabel').toString()}</button>
 
     </div>);
 }

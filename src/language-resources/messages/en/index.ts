@@ -10,7 +10,7 @@ export default {
             titleLabel: 'Task title',
             descriptionLabel: 'Task description',
             saveLabel: 'Save',
-            cancelLabel: 'Cancel',
+            closeLabel: 'Close',
         },
         task: {
             priority: {
