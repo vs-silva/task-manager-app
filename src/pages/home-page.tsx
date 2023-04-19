@@ -1,7 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import TasksStoreSlice, {getAllTasks, getTaskByID, removeTask, saveTask} from "../store/tasks-store-slice";
+import TasksStoreSlice, {
+    getAllTasks,
+    getTaskByID,
+    toggleComplete,
+    removeTask,
+    saveTask
+} from "../store/tasks-store-slice";
 import {AppDispatch} from "../store";
 import type {TaskDTO} from "../integration/tasks/core/dtos/task.dto";
 import Eventbus from "../eventbus";
@@ -37,8 +43,9 @@ export function HomePage(): JSX.Element {
             setShowEditor(true);
         });
 
-        Eventbus.on(TaskEventConstants.TOGGLE_COMPLETE, (id) => {
-            console.log('TOGGLE_COMPLETE:::', id);
+        Eventbus.on(TaskEventConstants.TOGGLE_COMPLETE, async (id) => {
+            await dispatch(toggleComplete(id as string));
+            await dispatch(getTaskByID(id as string));
         });
 
         Eventbus.on(TaskEventConstants.REMOVE, async (id) => {
@@ -60,12 +67,8 @@ export function HomePage(): JSX.Element {
     }, [initialLoad]);
 
     return (<div>
-        {JSON.stringify(tasks)}
-
-
         <TitleComponent title={t('header.title').toString()}/>
         <ListComponent tasks={tasks} emitter={Eventbus}/>
         <TaskComponent show={showEditor} task={task} emitter={Eventbus}/>
-
     </div>);
 }

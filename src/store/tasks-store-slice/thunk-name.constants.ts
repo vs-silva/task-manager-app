@@ -3,4 +3,5 @@ export const ThunkNameConstants = {
     GET_TASK_BY_ID: 'get-task-by-id',
     SAVE_TASK: 'save-task',
     REMOVE_TASK: 'remove-task',
+    MARK_COMPLETE: 'mark-complete'
 } as const;

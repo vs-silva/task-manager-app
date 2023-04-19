@@ -31,6 +31,21 @@ export const saveTask = createAsyncThunk(
     }
 );
 
+export const toggleComplete = createAsyncThunk(
+    ThunkNameConstants.MARK_COMPLETE,
+    async (id: string, {dispatch}) => {
+        const task = await Tasks.getTaskByID(id);
+
+        if(!task) {
+            return;
+        }
+
+        task.complete = !task.complete;
+        dispatch(saveTask(task));
+        dispatch(getAllTasks());
+    }
+);
+
 export const removeTask = createAsyncThunk(
     ThunkNameConstants.REMOVE_TASK,
     async (id: string, {dispatch}) => {
@@ -58,6 +73,10 @@ function builderProcessor(builder): void {
     });
 
     builder.addCase(saveTask.fulfilled, () => {
+        return;
+    });
+
+    builder.addCase(toggleComplete.fulfilled, () => {
         return;
     });
 }
