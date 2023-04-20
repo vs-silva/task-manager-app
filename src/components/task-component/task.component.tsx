@@ -20,16 +20,16 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
     useEffect(() => {
 
-        if(!task) {
+        if(!task || !show) {
             return;
         }
 
-        setTitleValue(task.title || '');
-        setDescriptionValue(task.description as string || '');
-        setPriorityValue(task.priority || TaskPriorityConstants.LOW);
-        setCompleteValue(task.complete || false);
+        setIsEditMode(!!task.id);
+        setTitleValue(task?.title || '');
+        setDescriptionValue(task?.description || '');
+        setPriorityValue(task?.priority || TaskPriorityConstants.LOW);
+        setCompleteValue(!!task?.complete);
         setSaveDisabled(true);
-        setIsEditMode( !!task.id);
 
     },[show, task]);
 
