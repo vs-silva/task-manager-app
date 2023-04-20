@@ -45,6 +45,7 @@ describe('Task component tests', () => {
         const titleInput = component.getByTestId('task-component__title-input');
         const descriptionLabel = component.getByTestId('task-component__description-label');
         const descriptionTextArea = component.getByTestId('task-component__description-text-area');
+        const priorityLabel = component.getByTestId('task-component__priority-selector-label');
         const prioritySelector = component.getByTestId('task-component__priority-selector');
         const saveButton = component.getByTestId('task-component__save-button');
         const closeButton = component.getByTestId('task-component__close-button');
@@ -62,6 +63,9 @@ describe('Task component tests', () => {
 
         expect(descriptionTextArea).toBeTruthy();
         expect(descriptionTextArea.textContent).toEqual(fakeTask.description);
+
+        expect(priorityLabel).toBeTruthy();
+        expect(priorityLabel.textContent).toEqual('editor.priorityLabel');
 
         expect(prioritySelector).toBeTruthy();
         expect((prioritySelector as HTMLSelectElement).value).toEqual(fakeTask.priority);

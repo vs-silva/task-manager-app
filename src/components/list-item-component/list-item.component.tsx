@@ -2,6 +2,7 @@ import {MouseEvent} from "react";
 import type {TaskDTO} from "../../integration/tasks/core/dtos/task.dto";
 import type {TaskEmitterService} from "../../integration/tasks/core/services/task-emitter.service";
 import {TaskEventConstants} from "../../integration/tasks/core/constants/task-event.constants";
+import trashicon from '../../assets/trash.svg';
 
 export function ListItemComponent(props: {task?: TaskDTO, emitter?: TaskEmitterService}) : JSX.Element {
 
@@ -29,13 +30,13 @@ export function ListItemComponent(props: {task?: TaskDTO, emitter?: TaskEmitterS
 
         }>{task.complete}</div>
 
-        <h3 className='list-item-component__title' data-testid='list-item-component__title' onClick={
+        <h3 className={`list-item-component__title ${task.complete ? 'marked-completed': ''}`} data-testid='list-item-component__title' onClick={
 
             (event: MouseEvent<HTMLHeadingElement>):void => handleClick(event, TaskEventConstants.DISPLAY_DETAILS, task)
 
         }>{task.title}</h3>
 
-        <img className='list-item-component__delete' data-testid='list-item-component__delete' src='' alt='' onClick={
+        <img className='list-item-component__delete' data-testid='list-item-component__delete' src={trashicon} alt='trash-icon' onClick={
 
             (event: MouseEvent<HTMLImageElement>):void => handleClick(event, TaskEventConstants.REMOVE, task)
 

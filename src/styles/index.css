@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', Helvetica, sans-serif;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -11,10 +11,13 @@
   --base-blue-color: #e3e9ff;
   --base-text-color: #8c99bb;
   --base-purple-color: #af7eeb;
+  --base-green-color: #75e900;
+  --base-disabled-green-color: #68B159;
 }
 
 body {
   background-color: var(--base-blue-color);
+  padding-top: 100px;
 }
 
 /* layout */
@@ -29,6 +32,8 @@ body {
   color: white;
   text-align: center;
   padding: 20px 0;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
+  margin-bottom: 40px;
 }
 
 .title-component__container > .title-component__title {
@@ -37,9 +42,38 @@ body {
 }
 
 /*List*/
+.list-component__container {
+  background-color: white;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
+  padding: 40px 40px 0 40px;
+  margin-bottom: 60px;
+}
+
 .list-component__container > .list-component__list {
   list-style: none;
   padding: 0;
+  margin-bottom: 20px;
+}
+
+.list-component__container > .list-component__add-button {
+  display: block;
+  margin: 0 auto;
+  border: none;
+  color: white;
+  font-weight: bolder;
+  border-radius: 20px;
+  background-color: var(--base-purple-color);
+  padding: 10px 20px;
+  position: relative;
+  top: 20px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.task-component__container {
+  background-color: white;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.2);
 }
 
 /*ListItem*/
@@ -47,26 +81,146 @@ body {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .list-item-component__container > .list-item-component__marker {
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border: 2px solid var(--base-text-color);
+  width: 8px;
+  height: 8px;
+  background-color: var(--base-purple-color);
+  border: 1px solid var(--base-text-color);
   border-radius: 50%;
+  margin-top: 4px;
+  margin-right: 10px;
 }
 
-.list-item-component__container >.list-item-component__title {
+.list-item-component__container > .list-item-component__title {
   margin: 0;
   flex-grow: 2;
-  background-color: green;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.marked-completed {
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
 }
 
 .list-item-component__container > .list-item-component__delete {
   display: block;
-  background-color: blue;
-  width: 10px;
-  height: 10px;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  opacity: .3;
+  transition: opacity 0.2s;
+}
+
+.list-item-component__container > .list-item-component__delete:hover {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+@-webkit-keyframes fadein {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-moz-keyframes fadein {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadein {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Task component container */
+.task-component__container {
+  padding: 40px;
+  -webkit-animation: fadein 0.2s ease-in;
+  -moz-animation: fadein 0.2s ease-in;
+  animation: fadein 0.2s ease-in;
+}
+
+.task-component__container > .task-component__title-label {
+  display: block;
+  width: 100%;
+  font-size: .8em;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.task-component__container > .task-component__title-input {
+  display: block;
+  width: 95%;
+  margin-bottom: 20px;
+  padding: 10px 10px;
+  border: none;
+  background-color: rgba(0, 0, 0, .05);
+  font-family: 'Montserrat', Helvetica, sans-serif;
+}
+
+.task-component__container > .task-component__description-label {
+  display: block;
+  width: 100%;
+  font-size: .8em;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.task-component__container > .task-component__description-text-area {
+  display: block;
+  width: 95%;
+  height: 100px;
+  resize: none;
+  margin-bottom: 20px;
+  padding: 10px 10px;
+  border: none;
+  background-color: rgba(0, 0, 0, .05);
+  font-family: 'Montserrat', Helvetica, sans-serif;
+}
+
+.task-component__container > .task-component__priority-selector-label {
+  display: block;
+  width: 100%;
+  font-size: .8em;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.task-component__container > .task-component__priority-selector {
+  display: block;
+  width: 99%;
+  padding: 10px 10px;
+  border: none;
+  background-color: rgba(0, 0, 0, .05);
+  margin-bottom: 20px;
+  font-family: 'Montserrat', Helvetica, sans-serif;
+}
+
+.task-component__container > .task-component__save-button {
+  text-align: center;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 10px;
+  background-color: var(--base-green-color);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.task-component__container > .task-component__save-button:disabled {
+  background-color: var(--base-disabled-green-color);
+}
+
+.task-component__container > .task-component__close-button {
+  text-align: center;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
