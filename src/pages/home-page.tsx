@@ -39,6 +39,7 @@ export function HomePage(): JSX.Element {
         });
 
         Eventbus.on(TaskEventConstants.DISPLAY_DETAILS, async (id) => {
+            dispatch(clearTask());
             await dispatch(getTaskByID(id as string));
             setShowEditor(true);
         });

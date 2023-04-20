@@ -48,6 +48,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                id="taskTitleInput"
                defaultValue={titleValue}
                disabled={completeValue}
+               placeholder={t('editor.titlePlaceholder').toString()}
                onChange={
 
             (event: ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +75,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                   data-testid="task-component__description-text-area"
                   id="taskDescriptionTextArea"
                   defaultValue={descriptionValue}
+                  placeholder={t('editor.descriptionPlaceholder').toString()}
                   disabled={completeValue} onChange={
 
             (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -98,8 +100,10 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
         }></textarea>
 
+        <label htmlFor="taskPrioritySelector" className="task-component__priority-selector-label" data-testid="task-component__priority-selector-label">{t('editor.priorityLabel').toString()}</label>
         <select className="task-component__priority-selector"
                 data-testid="task-component__priority-selector"
+                id="taskPrioritySelector"
                 value={priorityValue}
                 disabled={completeValue}
                 onChange={
