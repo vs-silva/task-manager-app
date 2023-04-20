@@ -1,6 +1,8 @@
 # Task Manager App
 A frontend application for staying organized and productive! The user can easily create and prioritize the to-do list.
 
+![task_manager_img_02](https://user-images.githubusercontent.com/74774434/233361392-3a71d15e-4f27-4aa2-aa9a-788db28d383c.jpg)
+
 #### Demo
 [Try it live](https://vs-silva.github.io/task-manager-app/)
 
