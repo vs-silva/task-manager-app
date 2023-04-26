@@ -1,6 +1,6 @@
 import type {TaskDTO} from "../../integration/tasks/core/dtos/task.dto";
 import type {TaskEmitterService} from "../../integration/tasks/core/services/task-emitter.service";
-import {MouseEvent, ChangeEvent, useEffect, useState} from "react";
+import {MouseEvent, ChangeEvent, useEffect, useState, useRef} from "react";
 import { useTranslation } from 'react-i18next';
 import {TaskPriorityConstants} from "../../integration/tasks/core/constants/task-priority.constants";
 import {TaskEventConstants} from "../../integration/tasks/core/constants/task-event.constants";
@@ -11,6 +11,9 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
     const {show,task, emitter} = props;
 
+    const titleInputRef = useRef(null);
+    const descriptionTextAreaRef = useRef(null);
+
     const [titleValue, setTitleValue] = useState('');
     const [descriptionValue, setDescriptionValue] = useState('');
     const [priorityValue, setPriorityValue] = useState('');
@@ -18,20 +21,53 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
     const [isEditMode, setIsEditMode] = useState(false);
     const [saveDisabled, setSaveDisabled] = useState(true);
 
-    useEffect(() => {
+    function updateInputs(task?: TaskDTO): void {
+        setIsEditMode(!!task);
 
-        if(!task || !show) {
-            return;
-        }
-
-        setIsEditMode(!!task.id);
         setTitleValue(task?.title || '');
         setDescriptionValue(task?.description || '');
         setPriorityValue(task?.priority || TaskPriorityConstants.LOW);
         setCompleteValue(!!task?.complete);
         setSaveDisabled(true);
 
+        if(titleInputRef.current && descriptionTextAreaRef.current) {
+            ( titleInputRef.current['value'] as string ) = task?.title || '';
+            ( descriptionTextAreaRef.current['value'] as string ) = task?.description || '';
+        }
+    }
+
+
+    useEffect(() => {
+
+        if(!task || !show) {
+            return;
+        }
+
+        if(!task.id) {
+            updateInputs();
+            return;
+        }
+
+        updateInputs(task);
+
     },[show, task]);
+
+
+
+    function checkCanSave(sourceValue: string, targetValue: string): void {
+        if(!isEditMode) {
+            setSaveDisabled(false);
+        }
+        else {
+
+            if(sourceValue.trim() !== targetValue.trim()) {
+                setSaveDisabled(false);
+            }
+            else {
+                setSaveDisabled(true);
+            }
+        }
+    }
 
 
     if(!show || !task) {
@@ -46,6 +82,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                className="task-component__title-input"
                data-testid="task-component__title-input"
                id="taskTitleInput"
+               ref={titleInputRef}
                defaultValue={titleValue}
                disabled={completeValue}
                placeholder={t('editor.titlePlaceholder').toString()}
@@ -66,6 +103,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                 }
 
                 setTitleValue(event.target.value);
+
             }
 
         }/>
@@ -75,27 +113,14 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                   data-testid="task-component__description-text-area"
                   id="taskDescriptionTextArea"
                   defaultValue={descriptionValue}
+                  ref={descriptionTextAreaRef}
                   placeholder={t('editor.descriptionPlaceholder').toString()}
                   disabled={completeValue} onChange={
 
             (event: ChangeEvent<HTMLTextAreaElement>) => {
                 event.stopPropagation();
-
-                if(!isEditMode) {
-                    setSaveDisabled(false);
-                }
-                else {
-
-                    if(event.target.value !== task?.description) {
-                        setSaveDisabled(false);
-                    }
-                    else {
-                        setSaveDisabled(true);
-                    }
-
-                }
-
                 setDescriptionValue(event.target.value);
+                checkCanSave(event.target.value, (task?.description as string));
             }
 
         }></textarea>
@@ -110,21 +135,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
                 (event: ChangeEvent<HTMLSelectElement>) => {
                     event.stopPropagation();
-
-                    if(!isEditMode) {
-                        setSaveDisabled(false);
-                    }
-                    else {
-
-                        if(event.target.value !== task?.priority) {
-                            setSaveDisabled(false);
-                        }
-                        else {
-                            setSaveDisabled(true);
-                        }
-
-                    }
-
+                    checkCanSave(event.target.value, task?.priority);
                     setPriorityValue(event.target.value);
                 }
         }>
@@ -157,6 +168,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                     createUpdateDTO.canDelete = task?.canDelete;
                 }
 
+                updateInputs();
                 emitter?.emit(TaskEventConstants.SAVE, createUpdateDTO);
             }
 
@@ -168,6 +180,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
+                updateInputs();
                 emitter?.emit(TaskEventConstants.CLOSE);
             }
 
