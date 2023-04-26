@@ -13,6 +13,9 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
     const titleInputRef = useRef(null);
     const descriptionTextAreaRef = useRef(null);
+
+    const [titleValue, setTitleValue] = useState('');
+    const [descriptionValue, setDescriptionValue] = useState('');
     const [priorityValue, setPriorityValue] = useState('');
     const [completeValue, setCompleteValue] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -21,6 +24,8 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
     function resetInputs():void {
         setIsEditMode(false);
 
+        setTitleValue('');
+        setDescriptionValue('');
         setPriorityValue(TaskPriorityConstants.LOW);
         setCompleteValue(false);
         setSaveDisabled(true);
@@ -34,6 +39,8 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
     function setInputs(task: TaskDTO): void {
         setIsEditMode(true);
 
+        setTitleValue(task.title);
+        setDescriptionValue(task.description || '');
         setPriorityValue(task?.priority);
         setCompleteValue(!!task?.complete);
         setSaveDisabled(true);
@@ -90,6 +97,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                data-testid="task-component__title-input"
                id="taskTitleInput"
                ref={titleInputRef}
+               defaultValue={titleValue}
                disabled={completeValue}
                placeholder={t('editor.titlePlaceholder').toString()}
                onChange={
@@ -108,6 +116,8 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                     setSaveDisabled(true);
                 }
 
+                setTitleValue(event.target.value);
+
             }
 
         }/>
@@ -116,12 +126,14 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
         <textarea className="task-component__description-text-area"
                   data-testid="task-component__description-text-area"
                   id="taskDescriptionTextArea"
+                  defaultValue={descriptionValue}
                   ref={descriptionTextAreaRef}
                   placeholder={t('editor.descriptionPlaceholder').toString()}
                   disabled={completeValue} onChange={
 
             (event: ChangeEvent<HTMLTextAreaElement>) => {
                 event.stopPropagation();
+                setDescriptionValue(event.target.value);
                 checkCanSave(event.target.value, (task?.description as string));
             }
 
@@ -157,24 +169,21 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
 
-                if(titleInputRef.current && descriptionTextAreaRef.current) {
+                const createUpdateDTO: TaskDTO = {
+                    title: titleValue,
+                    description: descriptionValue,
+                    priority: priorityValue,
+                    complete: completeValue
+                };
 
-                    const createUpdateDTO: TaskDTO = {
-                        title: (titleInputRef.current['value'] as string),
-                        description: (descriptionTextAreaRef.current['value'] as string),
-                        priority: priorityValue,
-                        complete: completeValue
-                    };
-
-                    if(isEditMode) {
-                        createUpdateDTO.id = task?.id;
-                        createUpdateDTO.status = task?.status;
-                        createUpdateDTO.canDelete = task?.canDelete;
-                    }
-
-                    resetInputs();
-                    emitter?.emit(TaskEventConstants.SAVE, createUpdateDTO);
+                if(isEditMode) {
+                    createUpdateDTO.id = task?.id;
+                    createUpdateDTO.status = task?.status;
+                    createUpdateDTO.canDelete = task?.canDelete;
                 }
+
+                resetInputs();
+                emitter?.emit(TaskEventConstants.SAVE, createUpdateDTO);
             }
 
         }>{t('editor.saveLabel').toString()}</button>
