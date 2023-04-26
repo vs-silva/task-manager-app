@@ -21,35 +21,21 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
     const [isEditMode, setIsEditMode] = useState(false);
     const [saveDisabled, setSaveDisabled] = useState(true);
 
-    function resetInputs():void {
-        setIsEditMode(false);
+    function updateInputs(task?: TaskDTO): void {
+        setIsEditMode(!!task);
 
-        setTitleValue('');
-        setDescriptionValue('');
-        setPriorityValue(TaskPriorityConstants.LOW);
-        setCompleteValue(false);
-        setSaveDisabled(true);
-
-        if(titleInputRef.current && descriptionTextAreaRef.current) {
-            ( titleInputRef.current['value'] as string ) = '';
-            ( descriptionTextAreaRef.current['value'] as string ) = '';
-        }
-    }
-
-    function setInputs(task: TaskDTO): void {
-        setIsEditMode(true);
-
-        setTitleValue(task.title);
-        setDescriptionValue(task.description || '');
-        setPriorityValue(task?.priority);
+        setTitleValue(task?.title || '');
+        setDescriptionValue(task?.description || '');
+        setPriorityValue(task?.priority || TaskPriorityConstants.LOW);
         setCompleteValue(!!task?.complete);
         setSaveDisabled(true);
 
         if(titleInputRef.current && descriptionTextAreaRef.current) {
-            ( titleInputRef.current['value'] as string ) = task.title;
-            ( descriptionTextAreaRef.current['value'] as string ) = ( task.description as string);
+            ( titleInputRef.current['value'] as string ) = task?.title || '';
+            ( descriptionTextAreaRef.current['value'] as string ) = task?.description || '';
         }
     }
+
 
     useEffect(() => {
 
@@ -58,11 +44,11 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
         }
 
         if(!task.id) {
-            resetInputs();
+            updateInputs();
             return;
         }
 
-        setInputs(task);
+        updateInputs(task);
 
     },[show, task]);
 
@@ -182,7 +168,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
                     createUpdateDTO.canDelete = task?.canDelete;
                 }
 
-                resetInputs();
+                updateInputs();
                 emitter?.emit(TaskEventConstants.SAVE, createUpdateDTO);
             }
 
@@ -194,7 +180,7 @@ export function TaskComponent(props: {show: boolean, task?:TaskDTO, emitter?: Ta
 
             (event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
-                resetInputs();
+                updateInputs();
                 emitter?.emit(TaskEventConstants.CLOSE);
             }
 
