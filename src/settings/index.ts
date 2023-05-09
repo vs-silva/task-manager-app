@@ -1,4 +1,4 @@
 export  default {
     inDevMode: true,
-    endpoint: ''
+    endpoint: 'https://shy-jade-newt-sock.cyclic.app/'
 }
