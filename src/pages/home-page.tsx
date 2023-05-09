@@ -15,6 +15,7 @@ import {TaskEventConstants} from "../integration/tasks/core/constants/task-event
 import {TitleComponent} from "../components/title-component/title.component";
 import {ListComponent} from "../components/list-component/list.component";
 import {TaskComponent} from "../components/task-component/task.component";
+
 export function HomePage(): JSX.Element {
     const [initialLoad, setInitialLoad] = useState(true);
     const [showEditor, setShowEditor] = useState(false);
