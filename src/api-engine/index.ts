@@ -1,9 +1,9 @@
 import axios, {AxiosInstance} from "axios";
 import type {InternalAxiosRequestConfig, AxiosResponse} from "axios";
+import type {TaskEmitterService} from "../integration/tasks/core/services/task-emitter.service";
 import {ApiEngineEventTypeConstants} from "./constants/api-engine-event-type.constants";
-import Eventbus from "../eventbus";
 
-export function ApiEngine(baseURL: string) : AxiosInstance {
+export function ApiEngine(baseURL: string, emitter?: TaskEmitterService) : AxiosInstance {
 
     const engine = axios.create({
         baseURL: baseURL,
@@ -15,18 +15,18 @@ export function ApiEngine(baseURL: string) : AxiosInstance {
     });
 
     engine.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-        Eventbus.emit(ApiEngineEventTypeConstants.SERVICE_REQUEST_STARTED);
+        emitter?.emit(ApiEngineEventTypeConstants.SERVICE_REQUEST_STARTED);
         return config;
 
     },handleRejectError);
 
     engine.interceptors.response.use((response: AxiosResponse) => {
-        Eventbus.emit(ApiEngineEventTypeConstants.SERVICE_REQUEST_ENDED);
+        emitter?.emit(ApiEngineEventTypeConstants.SERVICE_REQUEST_ENDED);
         return response;
     },handleRejectError);
 
     function handleRejectError(error: object): object {
-        Eventbus.emit(ApiEngineEventTypeConstants.SERVICE_REQUEST_ENDED);
+        emitter?.emit(ApiEngineEventTypeConstants.SERVICE_REQUEST_ENDED);
         return Promise.reject(error);
     }
 
