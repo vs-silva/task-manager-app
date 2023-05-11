@@ -1,4 +1,4 @@
-import {describe, it, vi, expect} from "vitest";
+import {describe, it, vi, expect, afterAll, beforeAll} from "vitest";
 import {faker} from "@faker-js/faker";
 import type {TaskDTO} from "../core/dtos/task.dto";
 import Tasks from "../index";
@@ -11,6 +11,24 @@ describe('Tasks service integration tests', () => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const statusOptionsRegex = /open|closed/i;
     const priorityOptionsRegex = /high|medium|low/i;
+
+    async function clearTasks(): Promise<void> {
+
+        const tasks = await Tasks.getAllTasks();
+
+        if(!tasks.length) {
+            return
+        }
+
+        for (const task of tasks) {
+            await Tasks.removeTask(task.id as string);
+        }
+
+    }
+
+    beforeAll(async () => {
+        await clearTasks();
+    });
 
     describe('Tasks service driver port tests', () => {
 
@@ -248,6 +266,10 @@ describe('Tasks service integration tests', () => {
 
         }, timeout);
 
+    });
+
+    afterAll(async () => {
+        await clearTasks();
     });
 
 });
