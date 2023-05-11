@@ -129,6 +129,20 @@ describe('Tasks service integration tests', () => {
 
         }, timeout);
 
+        it('removeTask should exit if provided TaskId is does not exist', async () => {
+
+            const fakeID = faker.datatype.uuid();
+            const spy = vi.spyOn(Tasks, 'removeTask');
+            const result = await Tasks.removeTask(fakeID);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeID);
+
+            expect(result).toBeFalsy();
+
+        }, timeout);
+
         it('getAllTasks should return a collection of TaskDTOs if Tasks are received', async () => {
 
             const fakeTasks : TaskDTO[]= [
